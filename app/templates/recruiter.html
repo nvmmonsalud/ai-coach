@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Recruiter Portal</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        margin: 20px;
+        background: #f6f8fb;
+      }
+      h1 {
+        color: #23395b;
+      }
+      form {
+        background: #fff;
+        padding: 16px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        margin-bottom: 24px;
+      }
+      label {
+        display: block;
+        margin-top: 12px;
+        font-weight: bold;
+      }
+      input,
+      textarea {
+        width: 100%;
+        padding: 8px;
+        margin-top: 4px;
+        border: 1px solid #ccd5e0;
+        border-radius: 4px;
+      }
+      button {
+        margin-top: 16px;
+        padding: 10px 16px;
+        background: #2f6fed;
+        color: #fff;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+      }
+      .result {
+        background: #fff;
+        padding: 16px;
+        border-radius: 8px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+      }
+      pre {
+        background: #0f172a;
+        color: #e2e8f0;
+        padding: 12px;
+        border-radius: 6px;
+        overflow-x: auto;
+      }
+      .alert {
+        color: #b42318;
+        margin-top: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Recruiter Job Submission</h1>
+    <p>
+      Submit a JD with metadata and screening settings. Set the <code>X-User-Id</code>
+      header to the recruiter (defaults to 1) when sending requests.
+    </p>
+    <form id="job-form">
+      <label for="title">Title</label>
+      <input id="title" name="title" required value="Senior Backend Engineer" />
+
+      <label for="function">Function</label>
+      <input id="function" name="function" required value="Engineering" />
+
+      <label for="industry">Industry</label>
+      <input id="industry" name="industry" required value="Software" />
+
+      <label for="location">Location</label>
+      <input id="location" name="location" required value="Remote" />
+
+      <label for="seniority">Seniority</label>
+      <input id="seniority" name="seniority" required value="Senior" />
+
+      <label for="compensation">Compensation</label>
+      <input id="compensation" name="compensation" placeholder="$180k - $220k" />
+
+      <label for="job_description">Job Description</label>
+      <textarea
+        id="job_description"
+        name="job_description"
+        rows="8"
+        required
+      >- Must have 5+ years building REST APIs with Python
+- Experience with FastAPI preferred
+- Required: PostgreSQL or MySQL experience
+- Nice to have: AWS or GCP exposure</textarea>
+
+      <label for="knockout_rules">Knockout Rules (comma separated)</label>
+      <input id="knockout_rules" name="knockout_rules" value="No relocation,No sponsorship" />
+
+      <label for="desired_industries">Desired Industries (comma separated)</label>
+      <input id="desired_industries" name="desired_industries" value="SaaS,AI" />
+
+      <label for="work_authorization">Work Authorization</label>
+      <input id="work_authorization" name="work_authorization" placeholder="US Citizen" />
+
+      <button type="submit">Submit Job</button>
+      <div class="alert" id="error"></div>
+    </form>
+
+    <div class="result">
+      <h2>Response</h2>
+      <pre id="response">Submit a job to see the structured output.</pre>
+    </div>
+
+    <script>
+      const form = document.getElementById('job-form');
+      const responseEl = document.getElementById('response');
+      const errorEl = document.getElementById('error');
+
+      form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        errorEl.textContent = '';
+        const formData = new FormData(form);
+
+        const payload = {
+          title: formData.get('title'),
+          function: formData.get('function'),
+          industry: formData.get('industry'),
+          location: formData.get('location'),
+          seniority: formData.get('seniority'),
+          compensation: formData.get('compensation') || null,
+          job_description: formData.get('job_description'),
+          screening_settings: {
+            knockout_rules: (formData.get('knockout_rules') || '')
+              .split(',')
+              .map((item) => item.trim())
+              .filter(Boolean),
+            desired_industries: (formData.get('desired_industries') || '')
+              .split(',')
+              .map((item) => item.trim())
+              .filter(Boolean),
+            work_authorization: formData.get('work_authorization') || null,
+          },
+        };
+
+        try {
+          const res = await fetch('/api/jobs', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'X-User-Id': '1',
+            },
+            body: JSON.stringify(payload),
+          });
+          if (!res.ok) {
+            const error = await res.json();
+            throw new Error(error.detail || 'Request failed');
+          }
+          const data = await res.json();
+          responseEl.textContent = JSON.stringify(data, null, 2);
+        } catch (err) {
+          errorEl.textContent = err.message;
+        }
+      });
+    </script>
+  </body>
+</html>
