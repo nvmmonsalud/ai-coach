@@ -1,0 +1,132 @@
+{
+  "skills": {
+    "System Design": {
+      "level": "intermediate",
+      "resources": {
+        "quick_wins": [
+          {
+            "title": "API design checklist",
+            "description": "Run through request/response design and versioning patterns.",
+            "resource_type": "reading",
+            "estimated_minutes": 25
+          },
+          {
+            "title": "Cache strategy drills",
+            "description": "Write down cache keys, TTLs, and invalidation steps for 3 services.",
+            "resource_type": "exercise",
+            "estimated_minutes": 35
+          }
+        ],
+        "medium_term": [
+          {
+            "title": "Designing Data-Intensive Applications",
+            "description": "Book study on storage, replication, and consistency.",
+            "resource_type": "reading",
+            "estimated_minutes": 240
+          },
+          {
+            "title": "Build a recommendations API",
+            "description": "Implement pagination, rate limits, and observability for a mock API.",
+            "resource_type": "project",
+            "estimated_minutes": 300
+          }
+        ],
+        "interview_prep": [
+          {
+            "title": "System design dry-run",
+            "description": "Simulate a 45-minute interview using a new prompt.",
+            "resource_type": "exercise",
+            "estimated_minutes": 45
+          }
+        ]
+      }
+    },
+    "Behavioral Storytelling": {
+      "level": "core",
+      "resources": {
+        "quick_wins": [
+          {
+            "title": "STAR template refresher",
+            "description": "Draft 3 stories with Situation-Task-Action-Result.",
+            "resource_type": "exercise",
+            "estimated_minutes": 30
+          }
+        ],
+        "medium_term": [
+          {
+            "title": "Practice with accountability partner",
+            "description": "Run 2 mock interviews focused on reflection and impact.",
+            "resource_type": "exercise",
+            "estimated_minutes": 90
+          }
+        ],
+        "interview_prep": [
+          {
+            "title": "Behavioral loop recording",
+            "description": "Record answers to 5 prompts and self-score with rubric.",
+            "resource_type": "exercise",
+            "estimated_minutes": 60
+          }
+        ]
+      }
+    },
+    "Communication": {
+      "level": "core",
+      "resources": {
+        "quick_wins": [
+          {
+            "title": "Clarity checklist",
+            "description": "Use concise framing and signposting in responses.",
+            "resource_type": "reading",
+            "estimated_minutes": 20
+          }
+        ],
+        "medium_term": [
+          {
+            "title": "Weekly storytelling practice",
+            "description": "Share a weekly update using structure and metrics.",
+            "resource_type": "exercise",
+            "estimated_minutes": 40
+          }
+        ],
+        "interview_prep": [
+          {
+            "title": "Partnered dry-run",
+            "description": "Practice a 30-minute behavioral loop with live feedback.",
+            "resource_type": "exercise",
+            "estimated_minutes": 30
+          }
+        ]
+      }
+    },
+    "API Design": {
+      "level": "core",
+      "resources": {
+        "quick_wins": [
+          {
+            "title": "HTTP semantics refresher",
+            "description": "Map CRUD operations to verbs and status codes.",
+            "resource_type": "reading",
+            "estimated_minutes": 20
+          }
+        ],
+        "medium_term": [
+          {
+            "title": "Design a candidate API",
+            "description": "Define endpoints, auth, rate limits, and pagination.",
+            "resource_type": "project",
+            "estimated_minutes": 180
+          }
+        ],
+        "interview_prep": [
+          {
+            "title": "API review session",
+            "description": "Mock review of request/response shapes and failure modes.",
+            "resource_type": "exercise",
+            "estimated_minutes": 45
+          }
+        ]
+      }
+    }
+  }
+}
