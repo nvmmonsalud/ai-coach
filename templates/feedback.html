@@ -1,0 +1,27 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="card">
+    <h2>Report an Issue</h2>
+    {% if submitted %}
+    <div class="alert success">
+        Feedback submitted. ID: {{ feedback_id }}
+    </div>
+    {% endif %}
+    <form method="post" action="/feedback" class="feedback-form">
+        <label for="category">Category</label>
+        <select id="category" name="category" required>
+            <option value="parse_error">Bad parse</option>
+            <option value="bias">Bias</option>
+            <option value="hallucination">Hallucination</option>
+            <option value="other">Other</option>
+        </select>
+        <label for="description">Description</label>
+        <textarea id="description" name="description" required placeholder="Describe the issue..." rows="5"></textarea>
+        <label for="reporter">Reporter (optional)</label>
+        <input id="reporter" name="reporter" placeholder="you@example.com" />
+        <label for="trace_id">Trace ID (optional)</label>
+        <input id="trace_id" name="trace_id" placeholder="Link to trace" />
+        <button type="submit">Submit</button>
+    </form>
+</section>
+{% endblock %}
