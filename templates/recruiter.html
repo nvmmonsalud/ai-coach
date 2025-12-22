@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Recruiter dashboard: {{ job_id }}</h2>
+{% for match in matches %}
+<div class="card">
+  <div class="score">Candidate: {{ match.candidate_id }} — Fit {{ '%.2f' % match.fit_score }} | Growth {{ '%.2f' % match.growth_potential }}</div>
+  <p>Status: {{ match.status }}</p>
+  <p>{{ match.explanation.rationale }}</p>
+  <div>
+    <strong>Matched skills:</strong>
+    {% for skill in match.explanation.matched_skills %}
+      <span class="badge">{{ skill }}</span>
+    {% endfor %}
+  </div>
+  <div>
+    <strong>Missing skills:</strong>
+    {% for skill in match.explanation.missing_skills %}
+      <span class="badge">{{ skill }}</span>
+    {% endfor %}
+  </div>
+  <form method="post" action="/api/matches/{{ match.match_id }}/shortlist">
+    <button type="submit">Shortlist</button>
+  </form>
+  <form method="post" action="/api/matches/{{ match.match_id }}/decline">
+    <button type="submit">Decline</button>
+  </form>
+  <form method="post" action="/api/matches/{{ match.match_id }}/feedback">
+    <input type="hidden" name="source" value="recruiter" />
+    <textarea name="comments" placeholder="Notes to refine the model"></textarea>
+    <button type="submit">Send feedback</button>
+  </form>
+</div>
+{% else %}
+  <p>No candidates matched yet.</p>
+{% endfor %}
+{% endblock %}
