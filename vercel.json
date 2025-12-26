@@ -7,7 +7,7 @@
   ],
   "functions": {
     "api/index.py": {
-      "includeFiles": "**"
+      "includeFiles": ["ai_coach/**", "templates/**", "static/**"]
     }
   },
   "routes": [
