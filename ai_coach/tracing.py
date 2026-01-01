@@ -19,21 +19,33 @@ class TraceRecord:
     metadata: Dict[str, str] = field(default_factory=dict)
 
 
+import threading
+from pathlib import Path
+from .persistence import JsonStore
+
+
 class TraceStore:
-    def __init__(self) -> None:
-        self.records: List[TraceRecord] = []
+    def __init__(self, storage_path: Path) -> None:
+        self.store = JsonStore(storage_path, TraceRecord)
+        self.lock = threading.Lock()
 
     def add(self, record: TraceRecord) -> TraceRecord:
-        self.records.append(record)
+        with self.lock:
+            self.store.add(record)
         return record
 
     def list_recent(self, limit: int = 50) -> List[TraceRecord]:
-        return sorted(self.records, key=lambda r: r.created_at, reverse=True)[:limit]
+        with self.lock:
+            records = self.store.get_all()
+        return sorted(records, key=lambda r: r.created_at, reverse=True)[:limit]
 
     def purge_older_than(self, cutoff: datetime) -> int:
-        before = len(self.records)
-        self.records = [r for r in self.records if r.created_at >= cutoff]
-        return before - len(self.records)
+        with self.lock:
+            records = self.store.get_all()
+            before = len(records)
+            surviving = [r for r in records if r.created_at >= cutoff]
+            self.store.replace_all(surviving)
+            return before - len(surviving)
 
 
 @dataclass

@@ -16,9 +16,16 @@ class FeedbackItem:
     metadata: Dict[str, str] = field(default_factory=dict)
 
 
+import threading
+from pathlib import Path
+
+from .persistence import JsonStore
+
+
 class ReviewQueue:
-    def __init__(self) -> None:
-        self.items: List[FeedbackItem] = []
+    def __init__(self, storage_path: Path) -> None:
+        self.store = JsonStore(storage_path, FeedbackItem)
+        self.lock = threading.Lock()
 
     def submit(
         self,
@@ -36,23 +43,34 @@ class ReviewQueue:
             source_trace_id=source_trace_id,
             metadata=metadata or {},
         )
-        self.items.append(item)
+        with self.lock:
+            self.store.add(item)
         return item
 
     def list_items(self, status: Optional[str] = None) -> List[FeedbackItem]:
-        results = self.items
+        with self.lock:
+            results = self.store.get_all()
         if status:
             results = [item for item in results if item.status == status]
         return sorted(results, key=lambda i: i.created_at, reverse=True)
 
     def update_status(self, feedback_id: str, status: str) -> Optional[FeedbackItem]:
-        for item in self.items:
-            if item.feedback_id == feedback_id:
-                item.status = status
-                return item
-        return None
+        with self.lock:
+            items = self.store.get_all()
+            updated_item = None
+            for item in items:
+                if item.feedback_id == feedback_id:
+                    item.status = status
+                    updated_item = item
+                    break
+            if updated_item:
+                self.store.replace_all(items)
+            return updated_item
 
     def purge_older_than(self, cutoff: datetime) -> int:
-        before = len(self.items)
-        self.items = [item for item in self.items if item.created_at >= cutoff]
-        return before - len(self.items)
+        with self.lock:
+            items = self.store.get_all()
+            before = len(items)
+            surviving = [item for item in items if item.created_at >= cutoff]
+            self.store.replace_all(surviving)
+            return before - len(surviving)
