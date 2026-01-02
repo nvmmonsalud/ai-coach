@@ -19,14 +19,16 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 
 BASE_DIR = Path(__file__).resolve().parent.parent
+DATA_DIR = BASE_DIR / "data"
+DATA_DIR.mkdir(exist_ok=True)
 
 templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
 
 app = FastAPI(title="AI Coach Safety and Observability")
 
 pii_guard = PIIGuard()
-trace_store = TraceStore()
-review_queue = ReviewQueue()
+trace_store = TraceStore(storage_path=DATA_DIR / "traces.json")
+review_queue = ReviewQueue(storage_path=DATA_DIR / "feedback.json")
 retention_manager = RetentionManager(RetentionPolicy(trace_ttl_days=30, feedback_ttl_days=90))
 rate_limiter = RateLimiter(RateLimiterConfig(max_calls=30, period_seconds=60))
 ai_client = AIClient(tracer=trace_store, pii_guard=pii_guard, rate_limiter=rate_limiter)
