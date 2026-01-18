@@ -1,4 +1,6 @@
 import logging
+import os
+import tempfile
 from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Optional
@@ -19,7 +21,12 @@ logger = logging.getLogger(__name__)
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-DATA_DIR = BASE_DIR / "data"
+
+if os.environ.get("VERCEL"):
+    DATA_DIR = Path(tempfile.gettempdir()) / "ai_coach_data"
+else:
+    DATA_DIR = BASE_DIR / "data"
+
 DATA_DIR.mkdir(exist_ok=True)
 
 templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
