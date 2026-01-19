@@ -1,29 +1,12 @@
 import logging
-import os
-import tempfile
-from datetime import datetime, timedelta
-from pathlib import Path
-from typing import Optional
 
-from fastapi import Depends, FastAPI, Form, HTTPException, Request
-from fastapi.responses import HTMLResponse
+from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 
 from .config import BASE_DIR
 from .routers import ai, feedback, system
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s")
-
-BASE_DIR = Path(__file__).resolve().parent.parent
-
-if os.environ.get("VERCEL"):
-    DATA_DIR = Path(tempfile.gettempdir()) / "ai_coach_data"
-else:
-    DATA_DIR = BASE_DIR / "data"
-
-DATA_DIR.mkdir(exist_ok=True)
-
-templates = Jinja2Templates(directory=str(BASE_DIR / "templates"))
 
 app = FastAPI(title="AI Coach Safety and Observability")
 
