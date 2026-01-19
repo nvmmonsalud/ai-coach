@@ -1,11 +1,17 @@
+import os
+import tempfile
 from pathlib import Path
 from pydantic import BaseModel
 
 BASE_DIR = Path(__file__).resolve().parent.parent
-DATA_DIR = BASE_DIR / "data"
+
+if os.environ.get("VERCEL"):
+    DATA_DIR = Path(tempfile.gettempdir()) / "ai_coach_data"
+else:
+    DATA_DIR = BASE_DIR / "data"
 
 # Ensure data directory exists
-DATA_DIR.mkdir(exist_ok=True)
+DATA_DIR.mkdir(parents=True, exist_ok=True)
 
 class AppConfig(BaseModel):
     rate_limit_calls: int = 30
